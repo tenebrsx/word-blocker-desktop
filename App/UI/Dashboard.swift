@@ -1,9 +1,9 @@
 import SwiftUI
 import Charts
 
-enum Section: String, CaseIterable, Identifiable {
+enum NavSection: String, CaseIterable, Identifiable {
     case overview = "Overview", words = "Blocked Words", allowlist = "Allowlist", sites = "Blocked Sites",
-         social = "Social Pause", reminder = "Reminder & Why", settings = "Settings"
+         social = "Social Pause", cinema = "Cinema", reminder = "Reminder & Why", settings = "Settings"
     var id: String { rawValue }
     var icon: String {
         switch self {
@@ -12,6 +12,7 @@ enum Section: String, CaseIterable, Identifiable {
         case .allowlist: return "checkmark.seal"
         case .sites: return "globe.badge.chevron.backward"
         case .social: return "hourglass"
+        case .cinema: return "film.stack"
         case .reminder: return "heart.text.square"
         case .settings: return "gearshape"
         }
@@ -21,7 +22,8 @@ enum Section: String, CaseIterable, Identifiable {
 struct DashboardView: View {
     @ObservedObject var store = Store.shared
     @ObservedObject var cooldown = Cooldown.shared
-    @State private var section: Section = .overview
+    @State private var section: NavSection = .overview
+    @State private var intro: NavSection?
 
     var body: some View {
         ZStack {
@@ -38,9 +40,10 @@ struct DashboardView: View {
                     .frame(maxWidth: 860, alignment: .leading)
                 }
             }
-            if !store.state.onboarded { OnboardingView().transition(.opacity) }
+            if !store.state.onboarded { OnboardingView().transition(.opacity).zIndex(1) }
         }
         .sheet(item: $cooldown.pending) { _ in CooldownSheet() }
+        .sheet(item: $intro) { s in FeatureIntroSheet(section: s) { store.update { $0.seenIntros.append(s.rawValue) }; intro = nil } }
         .preferredColorScheme(.dark)
         .frame(minWidth: 940, minHeight: 620)
     }
@@ -52,8 +55,11 @@ struct DashboardView: View {
                 Text("WORD BLOCKER").font(Theme.mono(12, .bold)).tracking(2).foregroundStyle(Theme.text)
             }
             .padding(.bottom, 22).padding(.top, 30)
-            ForEach(Section.allCases) { s in
-                Button { section = s } label: {
+            ForEach(NavSection.allCases) { s in
+                Button {
+                    section = s
+                    if store.state.onboarded, !store.state.seenIntros.contains(s.rawValue), ![.overview, .settings].contains(s) { intro = s }
+                } label: {
                     HStack(spacing: 10) {
                         Image(systemName: s.icon).frame(width: 18)
                         Text(s.rawValue).font(.system(size: 13, weight: .medium))
@@ -84,6 +90,7 @@ struct DashboardView: View {
         case .allowlist: AllowlistView()
         case .sites: SitesView()
         case .social: SocialView()
+        case .cinema: CinemaView()
         case .reminder: ReminderView()
         case .settings: SettingsView()
         }
@@ -375,5 +382,46 @@ struct CooldownSheet: View {
         }
         .padding(30).frame(width: 380)
         .background(Theme.panel)
+    }
+}
+
+struct CinemaView: View {
+    @ObservedObject var store = Store.shared
+    @ObservedObject var cinema = Cinema.shared
+    @State private var appID: pid_t = 0
+    private var apps: [NSRunningApplication] {
+        NSWorkspace.shared.runningApplications.filter { $0.activationPolicy == .regular && $0.processIdentifier != getpid() }
+    }
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text("Pick an app and a timer. Until it ends, Cmd-Tab, Cmd-H, Cmd-Q and Esc do nothing in that app and switching away brings you straight back. Word Blocker stays reachable for the emergency exit, which waits 60 seconds.")
+                .font(.system(size: 13)).foregroundStyle(Theme.dim)
+            if cinema.isActive {
+                Card(padding: 26) {
+                    VStack(alignment: .leading, spacing: 10) {
+                        Label2(text: "Locked in · \(cinema.target?.localizedName ?? "")")
+                        Text(String(format: "%02d:%02d", cinema.remaining / 60, cinema.remaining % 60)).font(Theme.mono(64, .bold)).foregroundStyle(Theme.accent)
+                        Button("Emergency exit") { cinema.requestEarlyExit() }.buttonStyle(AccentButton(prominent: false))
+                    }
+                }
+            } else {
+                Card {
+                    VStack(alignment: .leading, spacing: 14) {
+                        Label2(text: "New session")
+                        Picker("App", selection: $appID) {
+                            Text("Choose an app").tag(pid_t(0))
+                            ForEach(apps, id: \.processIdentifier) { a in Text(a.localizedName ?? "App").tag(a.processIdentifier) }
+                        }
+                        Stepper("Length: \(store.state.cinemaMinutes) min", value: Binding(get: { store.state.cinemaMinutes }, set: { v in store.update { $0.cinemaMinutes = v } }), in: 5...240, step: 5)
+                            .font(Theme.mono(12))
+                        Button("Lock me in") {
+                            if let a = apps.first(where: { $0.processIdentifier == appID }) { cinema.start(app: a, minutes: store.state.cinemaMinutes) }
+                        }
+                        .buttonStyle(AccentButton()).disabled(appID == 0 || !Permissions.accessibility)
+                        if !Permissions.accessibility { Text("Needs Accessibility permission.").font(.system(size: 11)).foregroundStyle(Theme.warn) }
+                    }
+                }
+            }
+        }
     }
 }

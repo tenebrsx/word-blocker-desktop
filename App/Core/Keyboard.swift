@@ -96,6 +96,10 @@ final class KeyboardGuard {
         let code = event.getIntegerValueField(.keyboardEventKeycode)
         let flags = event.flags
         let engine = Store.shared.engine
+        if Cinema.shared.shouldSwallow(code: code, flags: flags) {
+            DispatchQueue.main.async { Toast.show("Cinema is on. Finish what you started.") }
+            return nil
+        }
         if flags.contains(.maskCommand) || flags.contains(.maskControl) { buffer.reset(); return pass }
         if code == 0x33 { buffer.backspace(); return pass }
         if code == 0x24 || code == 0x4C {

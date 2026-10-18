@@ -24,6 +24,8 @@ struct AppState: Codable {
     var onboarded: Bool = false
     var soundOn: Bool = false
     var toastOn: Bool = true
+    var seenIntros: [String] = []
+    var cinemaMinutes: Int = 45
     var clock: ClockGuard = ClockGuard(lastTrusted: Date())
 }
 
@@ -47,7 +49,7 @@ final class Store: ObservableObject {
         url = dir.appendingPathComponent("state.json")
         builtInSites = Store.loadBuiltInSites()
         var s: AppState
-        if let data = try? Data(contentsOf: url), let decoded = try? JSONDecoder.iso.decode(AppState.self, from: data) {
+        if let data = try? Data(contentsOf: url), let decoded = Store.decodeTolerant(data) {
             s = decoded
         } else {
             s = AppState()
@@ -59,6 +61,17 @@ final class Store: ObservableObject {
         engine = Store.makeEngine(s)
         siteMatcher = BlockedSitesMatcher(patterns: builtInSites + s.sites)
         socialMatcher = SocialSiteMatcher(patterns: s.socialSites)
+    }
+
+    /// Fills keys missing from older saves with defaults, so new settings never wipe your data.
+    static func decodeTolerant(_ data: Data) -> AppState? {
+        if let s = try? JSONDecoder.iso.decode(AppState.self, from: data) { return s }
+        guard let saved = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any],
+              let baseData = try? JSONEncoder.iso.encode(AppState()),
+              var base = (try? JSONSerialization.jsonObject(with: baseData)) as? [String: Any] else { return nil }
+        base.merge(saved) { _, new in new }
+        guard let merged = try? JSONSerialization.data(withJSONObject: base) else { return nil }
+        return try? JSONDecoder.iso.decode(AppState.self, from: merged)
     }
 
     // MARK: Mutation
