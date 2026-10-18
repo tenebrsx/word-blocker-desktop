@@ -394,7 +394,7 @@ struct CinemaView: View {
     }
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Pick an app and a timer. Until it ends, Cmd-Tab, Cmd-H, Cmd-Q and Esc do nothing in that app and switching away brings you straight back. Word Blocker stays reachable for the emergency exit, which waits 60 seconds.")
+            Text("Pick an app and a timer. Until it ends, trying to leave (Cmd-Tab, Cmd-H/M/Q/W, Esc, leaving full screen, clicking another app) pulls you back. With Math Mode on, you can earn your way out with quick problems. Word Blocker stays reachable for the emergency exit, which waits 60 seconds. Settings apply to new sessions.")
                 .font(.system(size: 13)).foregroundStyle(Theme.dim)
             if cinema.isActive {
                 Card(padding: 26) {
@@ -414,6 +414,17 @@ struct CinemaView: View {
                         }
                         Stepper("Length: \(store.state.cinemaMinutes) min", value: Binding(get: { store.state.cinemaMinutes }, set: { v in store.update { $0.cinemaMinutes = v } }), in: 5...240, step: 5)
                             .font(Theme.mono(12))
+                        Divider().overlay(Theme.stroke)
+                        Toggle("Math Mode: want out? Earn it with quick problems", isOn: Binding(get: { store.state.cinema.mathMode }, set: { v in setPolicy { $0.mathMode = v } }))
+                            .toggleStyle(.switch).tint(Theme.accent).font(.system(size: 13))
+                        if store.state.cinema.mathMode {
+                            Stepper("Problems to get out: \(store.state.cinema.problems)", value: Binding(get: { store.state.cinema.problems }, set: { v in setPolicy { $0.problems = CinemaPolicy.clampProblems(v) } }), in: 1...30)
+                                .font(Theme.mono(12))
+                            Picker("After solving", selection: Binding(get: { store.state.cinema.exitBehavior }, set: { v in setPolicy { $0.exitBehavior = v } })) {
+                                Text("Let me out, lock again when I come back").tag(CinemaPolicy.ExitBehavior.relockOnReturn)
+                                Text("End the session").tag(CinemaPolicy.ExitBehavior.endSession)
+                            }
+                        }
                         Button("Lock me in") {
                             if let a = apps.first(where: { $0.processIdentifier == appID }) { cinema.start(app: a, minutes: store.state.cinemaMinutes) }
                         }
@@ -422,6 +433,16 @@ struct CinemaView: View {
                     }
                 }
             }
+        }
+    }
+
+    private func setPolicy(_ change: (inout CinemaPolicy) -> Void) {
+        var p = store.state.cinema
+        change(&p)
+        if p.isLooser(than: store.state.cinema) {
+            Cooldown.shared.request("Loosen Cinema?", detail: "Math Mode keeps you honest.") { store.update { $0.cinema = p } }
+        } else {
+            store.update { $0.cinema = p }
         }
     }
 }

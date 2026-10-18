@@ -82,9 +82,12 @@ struct OnboardingView: View {
             }
         case .cinema:
             FeatureScreen(kicker: "CINEMA", title: "Finish what\nyou started.",
-                          body: "Pick an app and a timer. Cinema locks you in: no Cmd-Tab, no wandering off, until the time is up.",
-                          strictness: "Strict, not a trap: an emergency exit is always there, behind a 60-second wait.") {
-                Image(systemName: "film.stack").font(.system(size: 56)).foregroundStyle(Theme.accent)
+                          body: "Pick an app and a timer. Cinema locks you in: no Cmd-Tab, no wandering off. Want out? Earn it. 5 quick problems.",
+                          strictness: "Strict, not a trap: Math Mode or the 60-second emergency exit.") {
+                VStack(spacing: 8) {
+                    Image(systemName: "film.stack").font(.system(size: 44)).foregroundStyle(Theme.accent)
+                    Text("8 × 7 = ?").font(Theme.mono(26, .bold)).foregroundStyle(Theme.text)
+                }
             }
         case .streak:
             FeatureScreen(kicker: "DAYS STRONG", title: "Every day\ncounts.",
@@ -225,7 +228,7 @@ struct FeatureIntroSheet: View {
         case .allowlist: return ("Fewer false alarms.", "Words that contain a blocked word but are harmless.", "Adding one waits 60 seconds.")
         case .sites: return ("Some doors stay shut.", "Blocked sites close the moment they open in your browser.", "No way through.")
         case .social: return ("Social media has you fried.", "A pause before every social site: go back, or do the math.", "Loosening waits 60 seconds.")
-        case .cinema: return ("Finish what you started.", "Lock yourself into one app until the timer ends.", "Emergency exit behind a 60-second wait.")
+        case .cinema: return ("Finish what you started.", "Lock yourself into one app until the timer ends. Want out? Earn it. 5 quick problems.", "Math Mode on by default. Emergency exit behind a 60-second wait.")
         case .reminder: return ("Talk to future you.", "The words you see when it's hard.", "Kind, not harsh.")
         default: return ("", "", "")
         }

@@ -116,3 +116,75 @@ struct SocialGateView: View {
         }
     }
 }
+
+/// Floating math gate (Cinema Math Mode). Big primary button = stay; solving all problems = out.
+enum MathGateWindow {
+    private static var window: NSWindow?
+
+    static func present(title: String, subtitle: String, problems: Int, primary: String, done: @escaping (Bool) -> Void) {
+        close()
+        let w = NSPanel(contentRect: NSRect(x: 0, y: 0, width: 480, height: 440), styleMask: [.titled, .fullSizeContentView], backing: .buffered, defer: false)
+        w.titlebarAppearsTransparent = true; w.titleVisibility = .hidden
+        w.isMovableByWindowBackground = true
+        w.level = .screenSaver
+        w.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
+        w.appearance = NSAppearance(named: .darkAqua)
+        let finish: (Bool) -> Void = { ok in close(); done(ok) }
+        w.contentView = NSHostingView(rootView: MathGateView(title: title, subtitle: subtitle, problems: problems, primary: primary, finish: finish))
+        w.center()
+        window = w
+        NSApp.activate(ignoringOtherApps: true)
+        w.makeKeyAndOrderFront(nil)
+    }
+
+    static func close() { window?.orderOut(nil); window = nil }
+}
+
+struct MathGateView: View {
+    let title: String
+    let subtitle: String
+    let problems: Int
+    let primary: String
+    let finish: (Bool) -> Void
+    @State private var challenge: MathChallenge<SystemRandomNumberGenerator>
+    @State private var answer = ""
+    @State private var wrong = false
+    @FocusState private var focused: Bool
+
+    init(title: String, subtitle: String, problems: Int, primary: String, finish: @escaping (Bool) -> Void) {
+        self.title = title; self.subtitle = subtitle; self.problems = problems; self.primary = primary; self.finish = finish
+        _challenge = State(initialValue: MathChallenge(required: problems, rng: SystemRandomNumberGenerator()))
+    }
+
+    var body: some View {
+        ZStack {
+            GrainBackground()
+            VStack(spacing: 16) {
+                Label2(text: "Cinema · Math Mode")
+                Text(title).font(.system(size: 28, weight: .heavy)).foregroundStyle(Theme.text)
+                Text(subtitle).font(.system(size: 13)).foregroundStyle(Theme.dim)
+                Text(challenge.current.text + " = ?").font(Theme.mono(40, .bold)).foregroundStyle(wrong ? Theme.warn : Theme.text)
+                TextField("Answer", text: $answer)
+                    .textFieldStyle(.plain).font(Theme.mono(20)).multilineTextAlignment(.center)
+                    .padding(10).frame(width: 160)
+                    .background(RoundedRectangle(cornerRadius: 9).fill(Color.black.opacity(0.4)))
+                    .focused($focused)
+                    .onChange(of: answer) { _, v in answer = String(v.filter { $0.isNumber }.prefix(4)) }
+                    .onSubmit(submit)
+                Text("\(challenge.solved) of \(challenge.required) solved").font(Theme.mono(11)).foregroundStyle(Theme.dim)
+                ProgressView(value: Double(challenge.solved), total: Double(challenge.required)).tint(Theme.accent).frame(width: 240)
+                Button { finish(false) } label: { Text(primary).frame(width: 260) }.buttonStyle(AccentButton()).keyboardShortcut(.cancelAction)
+            }
+            .padding(30)
+        }
+        .frame(width: 480, height: 440)
+        .onAppear { focused = true }
+    }
+
+    private func submit() {
+        let outcome = challenge.submit(answer)
+        answer = ""
+        wrong = outcome == .wrong
+        if outcome == .complete { finish(true) }
+    }
+}

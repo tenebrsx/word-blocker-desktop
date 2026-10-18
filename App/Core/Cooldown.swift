@@ -18,7 +18,8 @@ final class Cooldown: ObservableObject {
 
     @Published var pending: Request?
     @Published private(set) var remaining: Int = Int(Cooldown.seconds)
-    private var startedAt: TimeInterval = 0
+    private var clock = CooldownTimer(now: 0)
+    private func now() -> TimeInterval { ProcessInfo.processInfo.systemUptime }
     private var timer: Timer?
 
     private init() {
@@ -35,13 +36,12 @@ final class Cooldown: ObservableObject {
     }
 
     private func restart() {
-        startedAt = ProcessInfo.processInfo.systemUptime
-        remaining = Int(Cooldown.seconds)
+        clock = CooldownTimer(now: now(), duration: Cooldown.seconds)
+        remaining = clock.remaining(now: now())
     }
 
     private func tick() {
-        let left = Cooldown.seconds - (ProcessInfo.processInfo.systemUptime - startedAt)
-        remaining = max(0, Int(left.rounded(.up)))
+        remaining = clock.remaining(now: now())
     }
 
     var isReady: Bool { remaining == 0 }

@@ -26,6 +26,7 @@ struct AppState: Codable {
     var toastOn: Bool = true
     var seenIntros: [String] = []
     var cinemaMinutes: Int = 45
+    var cinema: CinemaPolicy = CinemaPolicy()
     var clock: ClockGuard = ClockGuard(lastTrusted: Date())
 }
 
@@ -100,7 +101,7 @@ final class Store: ObservableObject {
     }
 
     var daysStrong: Int {
-        max(0, Calendar.current.dateComponents([.day], from: state.streakStart, to: trustedNow()).day ?? 0)
+        Streak.daysStrong(start: state.streakStart, now: trustedNow())
     }
 
     var bestStreak: Int { max(state.bestStreakDays, daysStrong) }
@@ -108,7 +109,7 @@ final class Store: ObservableObject {
     func startNewCount() {
         let days = daysStrong
         update { s in
-            s.bestStreakDays = max(s.bestStreakDays, days)
+            s.bestStreakDays = Streak.bestAfterReset(best: s.bestStreakDays, current: days)
             s.streakStart = s.clock.trustedNow(system: Date())
         }
     }

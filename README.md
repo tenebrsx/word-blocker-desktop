@@ -14,6 +14,12 @@ Reads the active tab URL in supported browsers via Accessibility, then closes th
 ## Build
 ```
 xcodegen generate
-xcodebuild -scheme WordBlockerDesktop -configuration Debug -derivedDataPath build build
+xcodebuild -project WordBlockerDesktop.xcodeproj -scheme WordBlockerDesktop -configuration Debug -derivedDataPath build build
 ```
 Grant Accessibility to Word Blocker on first launch.
+
+## Tests
+`swift test` runs the engine, site matching, math, cooldown, streak, typing buffer and Cinema Math Mode logic anywhere (Linux too). `xcodebuild -project WordBlockerDesktop.xcodeproj -scheme WordBlockerDesktop test` runs the same suite on the Mac.
+
+## Cinema Math Mode
+Trying to leave a Cinema session shows a gate: 5 quick problems to get out, or a big Stay Focused button. Setting: after solving, either you are free until you return to the app (then it re-locks, default) or the session ends. Turning Math Mode off, fewer problems, or switching to "end session" waits 60s.
