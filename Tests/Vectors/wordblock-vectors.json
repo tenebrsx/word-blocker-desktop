@@ -1,0 +1,537 @@
+{
+ "_comment": "Shared Word Block test vectors: run by Tests/run-node.js (JS engine) and Tests/run-swift.sh (Swift engine). Config = Browser/Resources/wordblock-defaults.json plus extraWords/extraAllowlist.",
+ "extraWords": [
+  {
+   "word": "cunt",
+   "substring": true
+  }
+ ],
+ "extraAllowlist": [],
+ "cases": [
+  {
+   "text": "porn",
+   "mode": "final",
+   "expect": ""
+  },
+  {
+   "text": "PORN",
+   "mode": "final",
+   "expect": ""
+  },
+  {
+   "text": "p o r n",
+   "mode": "final",
+   "expect": ""
+  },
+  {
+   "text": "p.o.r.n",
+   "mode": "final",
+   "expect": ""
+  },
+  {
+   "text": "p-o-r-n",
+   "mode": "final",
+   "expect": ""
+  },
+  {
+   "text": "p_o_r_n",
+   "mode": "final",
+   "expect": ""
+  },
+  {
+   "text": "p*o*r*n",
+   "mode": "final",
+   "expect": ""
+  },
+  {
+   "text": "p/o\\r~n",
+   "mode": "final",
+   "expect": ""
+  },
+  {
+   "text": "p0rn",
+   "mode": "final",
+   "expect": ""
+  },
+  {
+   "text": "pr0n",
+   "mode": "final",
+   "expect": ""
+  },
+  {
+   "text": "p​o‌rn",
+   "mode": "final",
+   "expect": ""
+  },
+  {
+   "text": "рorn",
+   "mode": "final",
+   "expect": ""
+  },
+  {
+   "text": "ροrn",
+   "mode": "final",
+   "expect": ""
+  },
+  {
+   "text": "ｐｏｒｎ",
+   "mode": "final",
+   "expect": ""
+  },
+  {
+   "text": "𝐩𝐨𝐫𝐧",
+   "mode": "final",
+   "expect": ""
+  },
+  {
+   "text": "ⓟⓞⓡⓝ",
+   "mode": "final",
+   "expect": ""
+  },
+  {
+   "text": "pórn",
+   "mode": "final",
+   "expect": ""
+  },
+  {
+   "text": "p̶o̶r̶n̶",
+   "mode": "final",
+   "expect": ""
+  },
+  {
+   "text": "poooorn",
+   "mode": "final",
+   "expect": ""
+  },
+  {
+   "text": "pppooorrrnnn",
+   "mode": "final",
+   "expect": ""
+  },
+  {
+   "text": "free porn videos",
+   "mode": "final",
+   "expect": "free  videos"
+  },
+  {
+   "text": "pornhub.com",
+   "mode": "final",
+   "expect": ".com"
+  },
+  {
+   "text": "x v i d e o s",
+   "mode": "final",
+   "expect": ""
+  },
+  {
+   "text": "s3x",
+   "mode": "final",
+   "expect": ""
+  },
+  {
+   "text": "$ex",
+   "mode": "final",
+   "expect": ""
+  },
+  {
+   "text": "5 3 x",
+   "mode": "final",
+   "expect": ""
+  },
+  {
+   "text": "s.e.x",
+   "mode": "final",
+   "expect": ""
+  },
+  {
+   "text": "SEX!",
+   "mode": "final",
+   "expect": "!"
+  },
+  {
+   "text": "(sex)",
+   "mode": "final",
+   "expect": "()"
+  },
+  {
+   "text": "sexy pics",
+   "mode": "final",
+   "expect": " pics"
+  },
+  {
+   "text": "s e x y",
+   "mode": "final",
+   "expect": ""
+  },
+  {
+   "text": "nud3s",
+   "mode": "final",
+   "expect": ""
+  },
+  {
+   "text": "b00bs",
+   "mode": "final",
+   "expect": ""
+  },
+  {
+   "text": "8008s",
+   "mode": "final",
+   "expect": ""
+  },
+  {
+   "text": "tit$",
+   "mode": "final",
+   "expect": ""
+  },
+  {
+   "text": "pu$$y",
+   "mode": "final",
+   "expect": ""
+  },
+  {
+   "text": "d1ck",
+   "mode": "final",
+   "expect": ""
+  },
+  {
+   "text": "c0ck",
+   "mode": "final",
+   "expect": ""
+  },
+  {
+   "text": "@nal",
+   "mode": "final",
+   "expect": ""
+  },
+  {
+   "text": "3r0t1c",
+   "mode": "final",
+   "expect": ""
+  },
+  {
+   "text": "h3nt4i",
+   "mode": "final",
+   "expect": ""
+  },
+  {
+   "text": "hent@i",
+   "mode": "final",
+   "expect": ""
+  },
+  {
+   "text": "phetish",
+   "mode": "final",
+   "expect": ""
+  },
+  {
+   "text": "f3tish",
+   "mode": "final",
+   "expect": ""
+  },
+  {
+   "text": "0nlyfans",
+   "mode": "final",
+   "expect": ""
+  },
+  {
+   "text": "only fans",
+   "mode": "final",
+   "expect": ""
+  },
+  {
+   "text": "strip club",
+   "mode": "final",
+   "expect": ""
+  },
+  {
+   "text": "stripclub",
+   "mode": "final",
+   "expect": ""
+  },
+  {
+   "text": "str1ppers",
+   "mode": "final",
+   "expect": ""
+  },
+  {
+   "text": "pornn",
+   "mode": "final",
+   "expect": ""
+  },
+  {
+   "text": "mast*rbate",
+   "mode": "final",
+   "expect": "e"
+  },
+  {
+   "text": "s3xting",
+   "mode": "final",
+   "expect": ""
+  },
+  {
+   "text": "pornography",
+   "mode": "final",
+   "expect": "ography"
+  },
+  {
+   "text": "c u n t",
+   "mode": "final",
+   "expect": ""
+  },
+  {
+   "text": "xxx",
+   "mode": "final",
+   "expect": ""
+  },
+  {
+   "text": "watch p​оrn now",
+   "mode": "final",
+   "expect": "watch  now"
+  },
+  {
+   "text": "sex",
+   "mode": "live",
+   "expect": "sex"
+  },
+  {
+   "text": "sex ",
+   "mode": "live",
+   "expect": " "
+  },
+  {
+   "text": "porn",
+   "mode": "live",
+   "expect": ""
+  },
+  {
+   "text": "s e x",
+   "mode": "live",
+   "expect": "s e x"
+  },
+  {
+   "text": "s e x ",
+   "mode": "live",
+   "expect": " "
+  },
+  {
+   "text": "sext",
+   "mode": "live",
+   "expect": "sext"
+  },
+  {
+   "text": "sextant",
+   "mode": "live",
+   "expect": "sextant"
+  },
+  {
+   "text": "h3nt4",
+   "mode": "live",
+   "expect": "h3nt4"
+  },
+  {
+   "text": "Scunthorpe",
+   "mode": "final",
+   "expect": "Scunthorpe"
+  },
+  {
+   "text": "Essex and Sussex",
+   "mode": "final",
+   "expect": "Essex and Sussex"
+  },
+  {
+   "text": "Middlesex",
+   "mode": "final",
+   "expect": "Middlesex"
+  },
+  {
+   "text": "sextant",
+   "mode": "final",
+   "expect": "sextant"
+  },
+  {
+   "text": "analysis of the analyst",
+   "mode": "final",
+   "expect": "analysis of the analyst"
+  },
+  {
+   "text": "a canal",
+   "mode": "final",
+   "expect": "a canal"
+  },
+  {
+   "text": "cocktail party",
+   "mode": "final",
+   "expect": "cocktail party"
+  },
+  {
+   "text": "Hitchcock films",
+   "mode": "final",
+   "expect": "Hitchcock films"
+  },
+  {
+   "text": "Charles Dickens",
+   "mode": "final",
+   "expect": "Charles Dickens"
+  },
+  {
+   "text": "titanic",
+   "mode": "final",
+   "expect": "titanic"
+  },
+  {
+   "text": "class assessment",
+   "mode": "final",
+   "expect": "class assessment"
+  },
+  {
+   "text": "therapist",
+   "mode": "final",
+   "expect": "therapist"
+  },
+  {
+   "text": "specialist",
+   "mode": "final",
+   "expect": "specialist"
+  },
+  {
+   "text": "setting",
+   "mode": "final",
+   "expect": "setting"
+  },
+  {
+   "text": "authentic",
+   "mode": "final",
+   "expect": "authentic"
+  },
+  {
+   "text": "campsite",
+   "mode": "final",
+   "expect": "campsite"
+  },
+  {
+   "text": "nodes and dudes",
+   "mode": "final",
+   "expect": "nodes and dudes"
+  },
+  {
+   "text": "exotic",
+   "mode": "final",
+   "expect": "exotic"
+  },
+  {
+   "text": "stripped",
+   "mode": "final",
+   "expect": "stripped"
+  },
+  {
+   "text": "Milford",
+   "mode": "final",
+   "expect": "Milford"
+  },
+  {
+   "text": "Super Bowl XXXIV",
+   "mode": "final",
+   "expect": "Super Bowl XXXIV"
+  },
+  {
+   "text": "top or nothing",
+   "mode": "final",
+   "expect": "top or nothing"
+  },
+  {
+   "text": "my ex is nice",
+   "mode": "final",
+   "expect": "my ex is nice"
+  },
+  {
+   "text": "creamier",
+   "mode": "final",
+   "expect": "creamier"
+  },
+  {
+   "text": "hyphenation",
+   "mode": "final",
+   "expect": "hyphenation"
+  },
+  {
+   "text": "the 4 seasons",
+   "mode": "final",
+   "expect": "the 4 seasons"
+  },
+  {
+   "text": "I scored 100%",
+   "mode": "final",
+   "expect": "I scored 100%"
+  },
+  {
+   "text": "email@example.com",
+   "mode": "final",
+   "expect": "email@example.com"
+  },
+  {
+   "text": "Hancock",
+   "mode": "final",
+   "expect": "Hancock"
+  },
+  {
+   "text": "a peacock",
+   "mode": "final",
+   "expect": "a peacock"
+  },
+  {
+   "text": "assassin",
+   "mode": "final",
+   "expect": "assassin"
+  },
+  {
+   "text": "bass guitar",
+   "mode": "final",
+   "expect": "bass guitar"
+  },
+  {
+   "text": "café menu",
+   "mode": "final",
+   "expect": "café menu"
+  },
+  {
+   "text": "Москва",
+   "mode": "final",
+   "expect": "Москва"
+  },
+  {
+   "text": "東京",
+   "mode": "final",
+   "expect": "東京"
+  },
+  {
+   "text": "cockpit",
+   "mode": "final",
+   "expect": "cockpit"
+  },
+  {
+   "text": "Sussex University",
+   "mode": "final",
+   "expect": "Sussex University"
+  },
+  {
+   "text": "b o o b s",
+   "mode": "final",
+   "expect": ""
+  },
+  {
+   "text": "porn now",
+   "mode": "final",
+   "expect": " now"
+  },
+  {
+   "text": "рorn",
+   "mode": "final",
+   "expect": ""
+  },
+  {
+   "text": "pоrн",
+   "mode": "final",
+   "expect": "pоrн"
+  }
+ ]
+}

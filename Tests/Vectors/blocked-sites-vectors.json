@@ -1,0 +1,242 @@
+{
+ "_comment": "Shared Blocked Sites vectors: patterns = Browser/Resources/blocked-sites-defaults.json sites + extraPatterns. Run by Tests/run-node.js and Tests/run-swift.sh.",
+ "extraPatterns": [
+  "porn*.net",
+  "badsite.org",
+  "https://www.Example-Bad.com/path"
+ ],
+ "cases": [
+  {
+   "url": "https://pornhub.com/",
+   "expect": "pornhub.com"
+  },
+  {
+   "url": "http://PornHub.COM",
+   "expect": "pornhub.com"
+  },
+  {
+   "url": "https://www.pornhub.com/view?x=1",
+   "expect": "pornhub.com"
+  },
+  {
+   "url": "https://de.pornhub.com/video",
+   "expect": "pornhub.com"
+  },
+  {
+   "url": "https://a.b.c.xvideos.com",
+   "expect": "xvideos.com"
+  },
+  {
+   "url": "https://www2.xnxx.com",
+   "expect": "xnxx.com"
+  },
+  {
+   "url": "https://pornhub.com:8443/x",
+   "expect": "pornhub.com"
+  },
+  {
+   "url": "https://user:pw@pornhub.com/",
+   "expect": "pornhub.com"
+  },
+  {
+   "url": "https://pornhub.com./",
+   "expect": "pornhub.com"
+  },
+  {
+   "url": "pornhub.com",
+   "expect": "pornhub.com"
+  },
+  {
+   "url": "//pornhub.com/x",
+   "expect": "pornhub.com"
+  },
+  {
+   "url": "https://PORNHUB.com#frag",
+   "expect": "pornhub.com"
+  },
+  {
+   "url": "https://notpornhub.com",
+   "expect": null
+  },
+  {
+   "url": "https://pornhub.com.evil.org",
+   "expect": null
+  },
+  {
+   "url": "https://pornhubx.com",
+   "expect": null
+  },
+  {
+   "url": "https://example.com",
+   "expect": null
+  },
+  {
+   "url": "https://en.wikipedia.org/wiki/Pornography",
+   "expect": null
+  },
+  {
+   "url": "about:blank",
+   "expect": null
+  },
+  {
+   "url": "https://rule34.xxx/index",
+   "expect": "rule34.xxx"
+  },
+  {
+   "url": "https://anything.xxx",
+   "expect": "*.xxx"
+  },
+  {
+   "url": "https://a.b.porn",
+   "expect": "*.porn"
+  },
+  {
+   "url": "https://sex.com",
+   "expect": "sex.com"
+  },
+  {
+   "url": "https://www.sex.com/pin/1",
+   "expect": "sex.com"
+  },
+  {
+   "url": "https://essex.com",
+   "expect": null
+  },
+  {
+   "url": "https://sussex.ac.uk",
+   "expect": null
+  },
+  {
+   "url": "https://xxx.example.com",
+   "expect": null
+  },
+  {
+   "url": "https://adult.example.com",
+   "expect": null
+  },
+  {
+   "url": "https://porntube.net",
+   "expect": "porn*.net"
+  },
+  {
+   "url": "https://pornxyz.net",
+   "expect": "porn*.net"
+  },
+  {
+   "url": "https://my.pornstuff.net/x",
+   "expect": "porn*.net"
+  },
+  {
+   "url": "https://corn.net",
+   "expect": null
+  },
+  {
+   "url": "https://badsite.org",
+   "expect": "badsite.org"
+  },
+  {
+   "url": "https://example-bad.com/x",
+   "expect": "example-bad.com"
+  },
+  {
+   "url": "https://sub.example-bad.com",
+   "expect": "example-bad.com"
+  },
+  {
+   "url": "https://pоrnhub.com",
+   "expect": "pornhub.com"
+  },
+  {
+   "url": "https://xn--prnhub-wqf.com/",
+   "expect": "pornhub.com"
+  },
+  {
+   "url": "https://ｐｏｒｎｈｕｂ.com",
+   "expect": "pornhub.com"
+  },
+  {
+   "url": "https://pornhub．com",
+   "expect": "pornhub.com"
+  },
+  {
+   "url": "https://p​ornhub.com",
+   "expect": "pornhub.com"
+  },
+  {
+   "url": "https://xn--xideos-3ze.com",
+   "expect": "xvideos.com"
+  },
+  {
+   "url": "https://xn--xvides-0qf.com",
+   "expect": "xvideos.com"
+  },
+  {
+   "url": "https://pórnhub.com",
+   "expect": "pornhub.com"
+  },
+  {
+   "url": "https://xn--prnhub-bxa.com",
+   "expect": "pornhub.com"
+  },
+  {
+   "url": "https://xn--invalid-.com",
+   "expect": null
+  },
+  {
+   "url": "https://xn--mnchen-3ya.de",
+   "expect": null
+  },
+  {
+   "url": "https://www.google.com/url?q=https://www.pornhub.com/view&sa=D",
+   "expect": "pornhub.com"
+  },
+  {
+   "url": "https://www.google.com/url?sa=t&url=https%3A%2F%2Fxvideos.com%2Fv%2F1&usg=x",
+   "expect": "xvideos.com"
+  },
+  {
+   "url": "https://duckduckgo.com/l/?uddg=https%3A%2F%2Fxnxx.com%2F&rut=abc",
+   "expect": "xnxx.com"
+  },
+  {
+   "url": "https://www.bing.com/ck/a?!&&p=abc&u=a1aHR0cHM6Ly93d3cueGhhbXN0ZXIuY29tL3ZpZGVvcw&ntb=1",
+   "expect": "xhamster.com"
+  },
+  {
+   "url": "https://l.facebook.com/l.php?u=https%3A%2F%2Fonlyfans.com%2Fx&h=1",
+   "expect": "onlyfans.com"
+  },
+  {
+   "url": "https://out.reddit.com/t3_x?url=https%3A%2F%2Fwww.pornhub.com&token=1",
+   "expect": "pornhub.com"
+  },
+  {
+   "url": "https://www.google.com/url?q=https%3A%2F%2Fwww.google.com%2Furl%3Fq%3Dhttps%3A%2F%2Fpornhub.com",
+   "expect": "pornhub.com"
+  },
+  {
+   "url": "https://www.google.com/search?q=pornhub",
+   "expect": null
+  },
+  {
+   "url": "https://www.google.com/search?q=https%3A%2F%2Fexample.com",
+   "expect": null
+  },
+  {
+   "url": "https://www.google.com/url?q=https://en.wikipedia.org/wiki/Essex",
+   "expect": null
+  },
+  {
+   "url": "https://example.com/?redirect=https%3A%2F%2Fchaturbate.com",
+   "expect": "chaturbate.com"
+  },
+  {
+   "url": "https://example.com/?next=https%3A%2F%2Fchaturbate.com",
+   "expect": null
+  },
+  {
+   "url": "https://www.google.com/url?q=%E0%A4%A",
+   "expect": null
+  }
+ ]
+}

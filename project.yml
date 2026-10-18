@@ -1,0 +1,49 @@
+name: WordBlockerDesktop
+options:
+  bundleIdPrefix: com.tenebrsx
+  deploymentTarget:
+    macOS: "14.0"
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    DEVELOPMENT_TEAM: VHX5CR3825
+    CODE_SIGN_STYLE: Automatic
+    MACOSX_DEPLOYMENT_TARGET: "14.0"
+targets:
+  WordBlockerDesktop:
+    type: application
+    platform: macOS
+    sources:
+      - App
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.tenebrsx.wordblocker.desktop
+        PRODUCT_NAME: Word Blocker
+        INFOPLIST_FILE: App/Info.plist
+        ENABLE_HARDENED_RUNTIME: NO
+        CODE_SIGN_ENTITLEMENTS: App/WordBlocker.entitlements
+        ASSETCATALOG_COMPILER_APPICON_NAME: ""
+  EngineTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - path: App/Engine
+      - path: Tests
+        excludes: ["Vectors/**"]
+      - path: Tests/Vectors
+        buildPhase: resources
+      - path: App/Resources/wordblock-defaults.json
+        buildPhase: resources
+      - path: App/Resources/blocked-sites-defaults.json
+        buildPhase: resources
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.tenebrsx.wordblocker.desktop.tests
+        GENERATE_INFOPLIST_FILE: YES
+schemes:
+  WordBlockerDesktop:
+    build:
+      targets:
+        WordBlockerDesktop: all
+    test:
+      targets: [EngineTests]
