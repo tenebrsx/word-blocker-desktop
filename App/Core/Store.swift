@@ -43,6 +43,10 @@ final class Store: ObservableObject {
     let builtInSites: [String]
 
     private let url: URL
+    /// Kept out of the published state: reading the trusted time must not trigger a view update
+    /// (that caused a render loop that froze the main thread).
+    private var clock: ClockGuard
+    private var lastClockSave: TimeInterval = 0
 
     private init() {
         let dir = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
@@ -60,6 +64,7 @@ final class Store: ObservableObject {
             s.allowlist = d.allowlist
         }
         state = s
+        clock = s.clock
         engine = Store.makeEngine(s)
         siteMatcher = BlockedSitesMatcher(patterns: builtInSites + s.sites)
         socialMatcher = SocialSiteMatcher(patterns: s.socialSites)
@@ -89,15 +94,17 @@ final class Store: ObservableObject {
     }
 
     private func save() {
-        if let data = try? JSONEncoder.iso.encode(state) { try? data.write(to: url, options: .atomic) }
+        var snapshot = state
+        snapshot.clock = clock
+        if let data = try? JSONEncoder.iso.encode(snapshot) { try? data.write(to: url, options: .atomic) }
     }
 
     // MARK: Streak (tamper resistant via ClockGuard)
 
     func trustedNow() -> Date {
-        var s = state
-        let now = s.clock.trustedNow(system: Date())
-        if s.clock != state.clock { state = s; save() }
+        let now = clock.trustedNow(system: Date())
+        let up = ProcessInfo.processInfo.systemUptime
+        if up - lastClockSave > 60 { lastClockSave = up; save() }
         return now
     }
 
@@ -111,7 +118,7 @@ final class Store: ObservableObject {
         let days = daysStrong
         update { s in
             s.bestStreakDays = Streak.bestAfterReset(best: s.bestStreakDays, current: days)
-            s.streakStart = s.clock.trustedNow(system: Date())
+            s.streakStart = self.clock.trustedNow(system: Date())
         }
     }
 
@@ -123,7 +130,7 @@ final class Store: ObservableObject {
             guard let http = resp as? HTTPURLResponse,
                   let header = http.value(forHTTPHeaderField: "Date"),
                   let server = ClockGuard.parseHTTPDate(header) else { return }
-            DispatchQueue.main.async { self?.update { $0.clock.applyServerTime(server, system: Date()) } }
+            DispatchQueue.main.async { self?.clock.applyServerTime(server, system: Date()); self?.save() }
         }.resume()
     }
 
