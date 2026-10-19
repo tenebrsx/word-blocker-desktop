@@ -6,6 +6,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         if !KeyboardGuard.shared.start() { Permissions.prompt() }
         SiteMonitor.shared.start()
         Store.shared.verifyClock()
+        if Store.shared.state.checkUpdatesOnLaunch { ReleaseChecker.shared.check() }
         // Pick up Accessibility as soon as it's granted.
         Timer.scheduledTimer(withTimeInterval: 1.5, repeats: true) { _ in
             if Permissions.accessibility { KeyboardGuard.shared.start() }
@@ -41,6 +42,7 @@ struct MenuContent: View {
         Text("\(store.daysStrong) days strong · best \(store.bestStreak)")
         Text("\(store.blocksToday) blocked today")
         Divider()
+        Button("Check for Updates") { ReleaseChecker.shared.check(announce: true) }
         Button("Open Dashboard") { NSApp.activate(ignoringOtherApps: true); openWindow(id: "dashboard") }
         Text(KeyboardGuard.shared.isActive ? "Protection active" : "Needs Accessibility permission")
     }

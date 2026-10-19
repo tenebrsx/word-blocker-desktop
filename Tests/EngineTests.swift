@@ -166,4 +166,35 @@ final class EngineTests: XCTestCase {
         XCTAssertNil(b.type("x", engine: engine))
         XCTAssertEqual(b.text, "px")
     }
+
+    // MARK: Releases
+
+    func testSemVerCompare() {
+        XCTAssertLessThan(SemVer("1.9.0")!, SemVer("v1.10.0")!)
+        XCTAssertEqual(SemVer("2.0")!, SemVer("2.0.0")!)
+        XCTAssertLessThan(SemVer("2.0.0-beta.2")!, SemVer("2.0.0")!)
+        XCTAssertLessThan(SemVer("2.0.0-beta.2")!, SemVer("2.0.0-beta.10")!)
+        XCTAssertFalse(SemVer("2.1")! < SemVer("2.0.9")!)
+        XCTAssertNil(SemVer("latest"))
+    }
+
+    func testReleaseDecodingAndUpdatePick() throws {
+        let json = """
+        [{"id":3,"tag_name":"v2.2.0-beta","name":"Beta","body":"**b**","draft":false,"prerelease":true,
+          "published_at":"2026-10-20T10:00:00Z","html_url":"https://github.com/a/b/releases/3","assets":[]},
+         {"id":2,"tag_name":"v2.1.0","name":"Fresh","body":"- fix","draft":false,"prerelease":false,
+          "published_at":"2026-10-19T10:00:00Z","html_url":"https://github.com/a/b/releases/2",
+          "assets":[{"id":9,"name":"WordBlocker.dmg","size":1048576,"download_count":42,
+                     "browser_download_url":"https://github.com/a/b/releases/download/v2.1.0/WordBlocker.dmg"}]},
+         {"id":4,"tag_name":"v9.0.0","name":null,"body":null,"draft":true,"prerelease":false,
+          "published_at":null,"html_url":"https://github.com/a/b/releases/4","assets":[]},
+         {"id":1,"tag_name":"v2.0","name":"Old","body":"","draft":false,"prerelease":false,
+          "published_at":"2026-10-01T10:00:00Z","html_url":"https://github.com/a/b/releases/1","assets":[]}]
+        """
+        let list = try GitHubRelease.decodeList(Data(json.utf8))
+        XCTAssertEqual(list.map(\.id), [3, 2, 1])               // draft dropped
+        XCTAssertEqual(list[1].assets.first?.downloadCount, 42)
+        XCTAssertEqual(SemVer.update(in: list, current: "2.0")?.tagName, "v2.1.0")
+        XCTAssertNil(SemVer.update(in: list, current: "2.1.0"))
+    }
 }

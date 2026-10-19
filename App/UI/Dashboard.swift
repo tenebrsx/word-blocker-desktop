@@ -3,7 +3,7 @@ import Charts
 
 enum NavSection: String, CaseIterable, Identifiable {
     case overview = "Overview", words = "Blocked Words", allowlist = "Allowlist", sites = "Blocked Sites",
-         social = "Social Pause", cinema = "Cinema", reminder = "Reminder & Why", settings = "Settings"
+         social = "Social Pause", cinema = "Cinema", reminder = "Reminder & Why", releases = "Releases", settings = "Settings"
     var id: String { rawValue }
     var icon: String {
         switch self {
@@ -14,6 +14,7 @@ enum NavSection: String, CaseIterable, Identifiable {
         case .social: return "hourglass"
         case .cinema: return "film.stack"
         case .reminder: return "heart.text.square"
+        case .releases: return "arrow.down.circle"
         case .settings: return "gearshape"
         }
     }
@@ -58,7 +59,7 @@ struct DashboardView: View {
             ForEach(NavSection.allCases) { s in
                 Button {
                     section = s
-                    if store.state.onboarded, !store.state.seenIntros.contains(s.rawValue), ![.overview, .settings].contains(s) { intro = s }
+                    if store.state.onboarded, !store.state.seenIntros.contains(s.rawValue), ![.overview, .settings, .releases].contains(s) { intro = s }
                 } label: {
                     HStack(spacing: 10) {
                         Image(systemName: s.icon).frame(width: 18)
@@ -92,6 +93,7 @@ struct DashboardView: View {
         case .social: SocialView()
         case .cinema: CinemaView()
         case .reminder: ReminderView()
+        case .releases: ReleasesView()
         case .settings: SettingsView()
         }
     }
@@ -340,6 +342,7 @@ struct SettingsView: View {
                 VStack(alignment: .leading, spacing: 12) {
                     Label2(text: "Feedback")
                     Toggle("Show a small note when a word is removed", isOn: Binding(get: { store.state.toastOn }, set: { v in store.update { $0.toastOn = v } }))
+                    Toggle("Check for updates on launch", isOn: Binding(get: { store.state.checkUpdatesOnLaunch }, set: { v in store.update { $0.checkUpdatesOnLaunch = v } }))
                     Toggle("Play a soft sound", isOn: Binding(get: { store.state.soundOn }, set: { v in store.update { $0.soundOn = v } }))
                 }
                 .toggleStyle(.switch).tint(Theme.accent).font(.system(size: 13))

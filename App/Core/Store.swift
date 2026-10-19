@@ -26,6 +26,7 @@ struct AppState: Codable {
     var toastOn: Bool = true
     var seenIntros: [String] = []
     var cinemaMinutes: Int = 45
+    var checkUpdatesOnLaunch: Bool = true
     var cinema: CinemaPolicy = CinemaPolicy()
     var clock: ClockGuard = ClockGuard(lastTrusted: Date())
 }
